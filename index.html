@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+
+    <title>TODO vanila js</title>
+  </head>
+  <body>
+    <header class="header">
+      <a href="/">
+        <h1 class="h1">Мой список дел</h1>
+      </a>
+    </header>
+    <main class="todo">
+      <form class="completedTasks">
+        <input class="completedTasks_checkbox" type="checkbox" id="complTasks" />
+        <label for="complTasks">Скрыть выполненные</label>
+      </form>
+      <form class="form">
+        <input class="formInput" type="text" value="" placeholder="Какие планы?" />
+        <button class="formBtn" type="submit">Add</button>
+      </form>
+      <ul class="list"></ul>
+    </main>
+    <footer class="footer">
+      <p class="doned-text">Выполненно задач: <span class="donedTodos">0</span></p>
+    </footer>
+    <script src="index.js"></script>
+  </body>
+</html>
