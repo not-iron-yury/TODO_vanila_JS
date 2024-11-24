@@ -2,6 +2,8 @@ const todoFormElem = document.querySelector('.form');
 const todoInputElem = document.querySelector('.formInput');
 const todoListElem = document.querySelector('.list');
 const donedTodosElem = document.querySelector('.donedTodos');
+const completedTasksVisible = document.querySelector('.completedTasks');
+const completedTasksCheckbox = document.querySelector('.completedTasks_checkbox');
 
 // ------------------- LocalStorage ------------------- //
 const setItemToLocalStorage = (key, value) => {
@@ -18,6 +20,7 @@ const getItemFromLocalStorage = key => {
 const todos = {
   _count: getItemFromLocalStorage('TODO_counter') || 0,
   _items: getItemFromLocalStorage('TODO_list') || [],
+  _isCompletedHidden: getItemFromLocalStorage('TODO_isCompletedHidden') || false,
 
   get count() {
     return this._count;
@@ -25,6 +28,7 @@ const todos = {
   set count(newValue) {
     this._count = newValue;
     todosCountDonedOutput();
+    this._isCompletedHidden && hideСompletedTasks(this._isCompletedHidden);
     setItemToLocalStorage('TODO_counter', this._count);
   },
 
@@ -34,7 +38,17 @@ const todos = {
   set items(newItems) {
     this._items = newItems;
     setItemToLocalStorage('TODO_list', this._items);
-    renderTodoList(todos.items);
+    renderTodoList(todos._items);
+    this._isCompletedHidden && hideСompletedTasks(this._isCompletedHidden);
+  },
+
+  get isCompletedHidden() {
+    return this._isCompletedHidden;
+  },
+  set isCompletedHidden(value) {
+    this._isCompletedHidden = value;
+    setItemToLocalStorage('TODO_isCompletedHidden', this._isCompletedHidden);
+    hideСompletedTasks(this._isCompletedHidden);
   },
 };
 
@@ -54,8 +68,10 @@ const todosCountDonedOutput = () => {
 
 // инициализация списка todos после загрузки DOM
 document.addEventListener('DOMContentLoaded', () => {
-  todosCountDonedOutput();
+  completedTasksCheckbox.checked = todos.isCompletedHidden;
   renderTodoList(todos.items);
+  hideСompletedTasks(todos.isCompletedHidden);
+  todosCountDonedOutput();
 });
 
 // create data-key
@@ -155,26 +171,6 @@ function updatedTodoStatus(key) {
 }
 
 // ==================================================== //
-// скрытие выполненных заданий
-// прикрутить к локальному хранилищу бы !
-
-const hiddenDoned = document.querySelector('.completedTasks');
-
-const hideСompletedTasks = () => {
-  const list = todoListElem.children;
-
-  for (let i = 0; i < list.length; i++) {
-    if (list[i].hasAttribute('data-doned')) {
-      list[i].classList.toggle('hidden');
-    }
-  }
-};
-
-hiddenDoned.addEventListener('change', e => {
-  hideСompletedTasks();
-});
-
-// ==================================================== //
 // редактирование уже созданных заданий
 
 const editTodo = e => {
@@ -200,3 +196,18 @@ const editTodo = e => {
     });
   }
 };
+// ==================================================== //
+// скрытие выполненных заданий
+
+// hideСompletedTasks
+const hideСompletedTasks = checked => {
+  const list = todoListElem.children;
+  for (let i = 0; i < list.length; i++) {
+    if (list[i].hasAttribute('data-doned')) {
+      list[i].classList.toggle('hidden', checked);
+    }
+  }
+};
+completedTasksVisible.addEventListener('change', e => {
+  todos.isCompletedHidden = e.target.checked;
+});
